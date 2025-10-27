@@ -1,0 +1,55 @@
+name: Deploy to Kali
+run-name: ${{ github.actor }} is deploying to Kali...
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger remote Git checkout and deploy
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            set -e
+
+            REPO_URL=git@github.com:Facts-and-Files/nginx-proxy.g
+            TARGET_DIR=~/nginx-proxy
+
+            echo "Checking repo at $TARGET_DIR..."
+            if [ -d "$TARGET_DIR/.git" ]; then
+              echo "Repository exists. Pulling latest changes..."
+              git -C "$TARGET_DIR" fetch --all
+              git -C "$TARGET_DIR" reset --hard origin/main
+            else
+              echo "Repository not found. Cloning..."
+              git clone "$REPO_URL" "$TARGET_DIR"
+            fi
+
+            echo "Populating .env file for Docker Compose..."
+            cat <<EOF > $TARGET_DIR/.env
+            DEFAULT_EMAIL=${{ secrets.DEFAULT_EMAIL }}
+            EOF
+
+            echo "Environment file written to $TARGET_DIR/.env"
+
+            NETWORK_NAME="kali-net"
+            if ! docker network ls --format '{{.Name}}' | grep -q "^${NETWORK_NAME}$"; then
+              docker network create ${NETWORK_NAME}
+              echo "Docker network ${NETWORK_NAME} created."
+            else
+              echo "Docker network ${NETWORK_NAME} already exists."
+            fi
+
+            echo "Docker updating service..."
+            cd "$TARGET_DIR"
+            docker compose pull || true
+            docker compose up -d --no-deps nginx-proxy nginx-proxy-acme
+
+            echo "Deployment complete."

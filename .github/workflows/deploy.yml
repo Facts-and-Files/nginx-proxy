@@ -19,7 +19,7 @@ jobs:
           script: |
             set -e
 
-            REPO_URL=git@github.com:Facts-and-Files/nginx-proxy.g
+            REPO_URL=git@github.com:Facts-and-Files/nginx-proxy.git
             TARGET_DIR=~/nginx-proxy
 
             echo "Checking repo at $TARGET_DIR..."

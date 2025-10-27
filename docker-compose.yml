@@ -13,6 +13,11 @@ services:
       - certs:/etc/nginx/certs
       - vhost:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 120s
+      timeout: 10s
+      retries: 5
     networks:
       - kali-net
 
@@ -30,6 +35,11 @@ services:
       - vhost:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
       - acme:/etc/acme.sh
+    healthcheck:
+      test: ["CMD", "pgrep", "bash"]
+      interval: 120s
+      timeout: 10s
+      retries: 3
     networks:
       - kali-net
 

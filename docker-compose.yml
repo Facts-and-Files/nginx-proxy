@@ -13,11 +13,6 @@ services:
       - certs:/etc/nginx/certs
       - vhost:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
-    healthcheck:
-      test: ["CMD", "curl", "-ks", "https://localhost"]
-      interval: 120s
-      timeout: 10s
-      retries: 5
     networks:
       - kali-net
 

@@ -10,9 +10,9 @@ services:
       - "443:443"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - certs:/etc/nginx/certs
-      - vhost:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
+      - ./data/certs:/etc/nginx/certs
+      - ./data/vhost:/etc/nginx/vhost.d
+      - ./data/html:/usr/share/nginx/html
     networks:
       - kali-net
 
@@ -26,10 +26,10 @@ services:
       - nginx-proxy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - certs:/etc/nginx/certs
-      - vhost:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
-      - acme:/etc/acme.sh
+      - ./data/certs:/etc/nginx/certs
+      - ./data/vhost:/etc/nginx/vhost.d
+      - ./data/html:/usr/share/nginx/html
+      - ./data/acme:/etc/acme.sh
     healthcheck:
       test: ["CMD", "pgrep", "bash"]
       interval: 120s
@@ -37,12 +37,6 @@ services:
       retries: 3
     networks:
       - kali-net
-
-volumes:
-  certs:
-  vhost:
-  html:
-  acme:
 
 networks:
   kali-net:

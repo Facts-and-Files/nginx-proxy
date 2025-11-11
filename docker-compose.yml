@@ -17,7 +17,7 @@ services:
       - kali-net
 
   nginx-proxy-acme:
-    image: nginxproxy/acme-companion
+    image: nginxproxy/acme-companion:2.6
     container_name: nginx-proxy-acme
     environment:
       - NGINX_PROXY_CONTAINER=nginx-proxy

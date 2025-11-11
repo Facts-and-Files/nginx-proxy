@@ -20,7 +20,4 @@ yarn-error.log
 *.sql.gz
 
 # app specific
-beszel_data/
-beszel_socket/
-beszel_agent_data/
-backups/
+data/
